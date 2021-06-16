@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@3.4.1/simplex/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+
+    <div class="container">
+        <h2>
+            <%= title %>
+        </h2>
+        <a href="/monuments/add" class="btn btn-sm btn-info">Add Monument</a
+      ><br /><br />
+      <a href="../.." class="btn btn-sm btn-info">Show Etudiants</a><br /><br />
+
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOM</th>
+                    <th>latitude</th>
+                    <th>longitude</th>
+                    <th>ville</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% etudiant.forEach(function(e){ %>
+                    <tr>
+                        <td>
+                            <%= e.id %>
+                        </td>
+                        <td>
+                            <%= e.nom %>
+                        </td>
+                        <td>
+                            <%= e.latitude %>
+                        </td>
+                        <td>
+                            <%= e.longitude %>
+                        </td>
+                        <td>
+                            <%= e.ville %>
+                        </td>
+                        <td>
+                            <a href="monuments/edit/<%= e.id %>" class="btn btn-sm btn-info">Edit</a
+              >
+              <a
+                href="monuments/delete/<%= e.id %>"
+                class="btn btn-sm btn-warning"
+                >Delete</a
+              >
+              <button type="button" class="btn btn-sm btn-danger mappage">
+                show position
+              </button>
+              <button type="button" class="btn btn-sm btn-success mappage"
+                onclick="Geolocalisation('<%= e.latitude %>','<%= e.longitude %>')">Checkout</button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="map"></div>
+
+    <script>
+      var c = Array();
+
+      var x = document.getElementById("id1").value;
+      var y = document.getElementById("id2").value;
+      const d = document.getElementsByClassName("mappage");
+
+      function initMap() {
+        // Map options
+        var options = {
+          zoom: 4,
+          center: { lat: 31.7945, lng: -7.0849 },
+        };
+
+        for (var i = 0; i < c.length; i++) {
+          // Add marker
+
+          new google.maps.Marker(c[i]);
+        }
+
+        // New map
+        var map = new google.maps.Map(document.getElementById("map"), options);
+
+
+        $(document).on("click", ".mappage", function () {
+          var lati = $(this).closest("tr").find("td").eq(0).text();
+
+          const myLatLng = {
+            lat: parseFloat($(this).closest("tr").find("td").eq(2).text()),
+            lng: parseFloat($(this).closest("tr").find("td").eq(3).text()),
+          };
+
+          var op =
+            "C:/xampp/htdocs/expressjs/views/monuments/CorrectionEnoncé.png";
+          var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+            title: "Hello Ensaj!",
+            icon:
+              "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
+          });
+          var infowindow = new google.maps.InfoWindow({
+            content: "<h1>Bingo!</h1>",
+          });
+
+          // show info window when marker is clicked
+          google.maps.event.addListener(marker, "click", function () {
+            infowindow.open(map, marker);
+          });
+        });
+       
+ 
+      }
+   function Geolocalisation(a, b) {
+      function showPosition(position) {
+        var x = parseFloat(position.coords.latitude - 0.1);
+        var y = parseFloat(position.coords.latitude + 0.1);
+        var u = parseFloat(position.coords.longitude - 0.1);
+        var v = parseFloat(position.coords.longitude + 0.1);
+        if (x <= parseFloat(a) && parseFloat(a) <= y && u <= parseFloat(b) && parseFloat(b) <= v) {
+          alert("you have visited the moniment");
+        }
+
+        else {
+
+          alert("you didn't visit the moniment yet");
+        }
+      }
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        alert("Check your position.");
+      }
+    }
+    </script>
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXiKlz-u4w3wOeTD8XyOcLfYzZ4FMzXR4&callback=initMap"
+    ></script>
+  </body>
+</html>

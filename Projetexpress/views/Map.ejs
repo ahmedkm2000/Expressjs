@@ -1,0 +1,103 @@
+<?php 
+// Database configuration 
+$dbHost     = "localhost"; 
+$dbUsername = "root"; 
+$dbPassword = ""; 
+$dbName     = "expressjs2"; 
+ 
+// Create database connection 
+$db = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName); 
+ 
+// Check connection 
+if ($db->connect_error) { die("Connection failed: " . $db->connect_error); }
+$result = $db->query("SELECT * FROM monument"); // Fetch the info-window data
+from the database $result2 = $db->query("SELECT * FROM monument"); ?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Gestion</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Gestion map</h1>
+    <form action="/save" method="post">
+        <div class="form-group">
+            <label for="latitude">latitude:</label>
+            <input type="text" class="form-control" id="id1" placeholder="Enter latitude" name="latitude" required />
+        </div>
+        <div class="form-group">
+            <label for="longitude">longitude:</label>
+            <input type="text" class="form-control" id="id2" placeholder="Enter longitude" name="longitude" required />
+        </div>
+        <button type="button" id="position">show position</button>
+    </form>
+    <div id="map"></div>
+
+    <script>
+        var c = Array();
+
+        var x = document.getElementById("id1").value;
+        var y = document.getElementById("id2").value;
+        const d = document.getElementById("position");
+
+        function initMap() {
+            // Map options
+            var options = {
+                zoom: 4,
+                center: {
+                    lat: 31.7945,
+                    lng: -7.0849
+                },
+            };
+
+            for (var i = 0; i < c.length; i++) {
+                // Add marker
+
+                new google.maps.Marker(c[i]);
+            }
+
+            // New map
+            var map = new google.maps.Map(document.getElementById("map"), options);
+
+            d.addEventListener("click", RespondClick);
+
+            function RespondClick() {
+                const myLatLng = {
+                    lat: parseFloat(document.getElementById("id1").value),
+                    lng: parseFloat(document.getElementById("id2").value),
+                };
+
+                var op = "C:/xampp/htdocs/expressjs/views/monuments/images/index.svg";
+                var marker = new google.maps.Marker({
+                    position: myLatLng,
+                    map: map,
+                    title: "Hello ENSAJ",
+                    icon: "C:/Users/hp/Downloads/Capture d’écran (322).png",
+                });
+                var infowindow = new google.maps.InfoWindow({
+                    content: "<h1>Bingo!</h1>",
+                });
+
+                // show info window when marker is clicked
+                google.maps.event.addListener(marker, "click", function() {
+                    infowindow.open(map, marker);
+                });
+            }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXiKlz-u4w3wOeTD8XyOcLfYzZ4FMzXR4&callback=initMap"></script>
+</body>
+
+</html>
